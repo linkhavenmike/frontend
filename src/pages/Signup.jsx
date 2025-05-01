@@ -16,15 +16,14 @@ export default function Signup({ onSignup, switchToLogin }) {
       localStorage.setItem('token', token);
       onSignup();
     } catch (err) {
-      console.error(err);
-      setError('Signup failed');
+      setError('Signup failed. Email may already be in use.');
     }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-      <div className="w-full max-w-md bg-white shadow-xl rounded-2xl p-8 border border-gray-100">
-        <h1 className="text-3xl font-bold text-center text-indigo-600 mb-6">Create Your Link Haven Account</h1>
+      <div className="w-full max-w-md bg-white shadow-xl rounded-2xl p-8">
+        <h1 className="text-3xl font-bold text-center text-indigo-600 mb-6">Create Your Account</h1>
         <form onSubmit={handleSignup} className="space-y-5">
           {error && <p className="text-red-500 text-sm text-center">{error}</p>}
           <input
@@ -37,7 +36,7 @@ export default function Signup({ onSignup, switchToLogin }) {
           />
           <input
             type="password"
-            placeholder="Create Password"
+            placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
@@ -51,7 +50,7 @@ export default function Signup({ onSignup, switchToLogin }) {
           </button>
           <p className="text-center text-sm text-gray-500">
             Already have an account?{' '}
-            <button type="button" onClick={switchToLogin} className="text-indigo-600 hover:underline">
+            <button type="button" onClick={switchToLogin} className="text-indigo-600 font-medium hover:underline">
               Log in
             </button>
           </p>

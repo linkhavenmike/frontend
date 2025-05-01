@@ -16,15 +16,14 @@ export default function Login({ onLogin, switchToSignup }) {
       localStorage.setItem('token', token);
       onLogin();
     } catch (err) {
-      console.error(err);
       setError('Invalid login credentials');
     }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-      <div className="w-full max-w-md bg-white shadow-xl rounded-2xl p-8 border border-gray-100">
-        <h1 className="text-3xl font-bold text-center text-indigo-600 mb-6">Welcome to Link Haven</h1>
+      <div className="w-full max-w-md bg-white shadow-xl rounded-2xl p-8">
+        <h1 className="text-3xl font-bold text-center text-indigo-600 mb-6">Link Haven Login</h1>
         <form onSubmit={handleLogin} className="space-y-5">
           {error && <p className="text-red-500 text-sm text-center">{error}</p>}
           <input
@@ -51,11 +50,7 @@ export default function Login({ onLogin, switchToSignup }) {
           </button>
           <p className="text-center text-sm text-gray-500">
             Don’t have an account?{' '}
-            <button
-              type="button"
-              onClick={switchToSignup}
-              className="text-indigo-600 hover:underline"
-            >
+            <button type="button" onClick={switchToSignup} className="text-indigo-600 font-medium hover:underline">
               Sign up
             </button>
           </p>
