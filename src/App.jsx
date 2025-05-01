@@ -1,19 +1,27 @@
 import { useEffect, useState } from 'react';
+import Login from './pages/Login';
+import Signup from './pages/Signup';
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL;
-console.log('API_BASE in prod:', API_BASE);
-
 
 function App() {
+  const [token, setToken] = useState(localStorage.getItem('token'));
+  const [view, setView] = useState(token ? 'dashboard' : 'login');
   const [url, setUrl] = useState('');
   const [source, setSource] = useState('web');
   const [category, setCategory] = useState('');
   const [response, setResponse] = useState(null);
   const [savedLinks, setSavedLinks] = useState([]);
 
+  useEffect(() => {
+    if (token) fetchLinks();
+  }, [token]);
+
   const fetchLinks = async () => {
     try {
-      const res = await fetch(`${API_BASE}/api/links`);
+      const res = await fetch(`${API_BASE}/api/links`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       const data = await res.json();
       setSavedLinks(data);
     } catch (err) {
@@ -21,32 +29,64 @@ function App() {
     }
   };
 
-  useEffect(() => {
-    fetchLinks();
-  }, []);
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const res = await fetch(`${API_BASE}/api/links`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify({ url, source, category }),
       });
       const data = await res.json();
       setResponse(data);
       setUrl('');
       setCategory('');
-      await fetchLinks(); // ✅ refresh list after submit
+      await fetchLinks();
     } catch (err) {
       console.error('Submit failed:', err);
     }
   };
 
+  if (view === 'login') {
+    return (
+      <Login
+        onLogin={() => {
+          setToken(localStorage.getItem('token'));
+          setView('dashboard');
+        }}
+        switchToSignup={() => setView('signup')}
+      />
+    );
+  }
+
+  if (view === 'signup') {
+    return (
+      <Signup
+        onSignup={() => setView('login')}
+        switchToLogin={() => setView('login')}
+      />
+    );
+  }
+
+  // Dashboard view
   return (
     <div className="min-h-screen bg-gray-50 font-sans px-4 py-12">
       <div className="max-w-xl mx-auto bg-white shadow-xl rounded-2xl p-8">
         <h1 className="text-4xl font-extrabold text-center text-indigo-600 mb-8">Link Haven</h1>
+
+        <button
+          onClick={() => {
+            localStorage.removeItem('token');
+            setToken(null);
+            setView('login');
+          }}
+          className="absolute top-6 right-6 text-sm text-gray-500 hover:text-gray-700"
+        >
+          Log out
+        </button>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
