@@ -16,7 +16,7 @@ export default function Signup({ onSignup, switchToLogin }) {
       localStorage.setItem('token', token);
       onSignup();
     } catch (err) {
-      setError('Signup failed. Email may already be in use.');
+      setError('Signup failed. Email may already be in use. Testing.');
     }
   };
 
