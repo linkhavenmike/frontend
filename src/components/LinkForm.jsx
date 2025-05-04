@@ -29,7 +29,8 @@ export default function LinkForm({ token, onLinkSaved }) {
     }
   };
   console.log("🚀 LinkForm deployed version!");
-  
+
+
   return (
     <form onSubmit={handleSubmit} className="space-y-4 mb-10">
       <div className="flex flex-col sm:flex-row sm:space-x-4 space-y-4 sm:space-y-0">
@@ -37,7 +38,7 @@ export default function LinkForm({ token, onLinkSaved }) {
   type="text"
   inputMode="url"
   pattern=".*"
-  placeholder="https://example.com"
+  placeholder="⭐ Paste a link like google.com ⭐"
   value={url}
   onChange={(e) => setUrl(e.target.value)}
   required
