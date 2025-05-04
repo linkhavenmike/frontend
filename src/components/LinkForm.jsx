@@ -28,7 +28,8 @@ export default function LinkForm({ token, onLinkSaved }) {
       setLoading(false);
     }
   };
-
+  console.log("🚀 LinkForm deployed version!");
+  
   return (
     <form onSubmit={handleSubmit} className="space-y-4 mb-10">
       <div className="flex flex-col sm:flex-row sm:space-x-4 space-y-4 sm:space-y-0">
