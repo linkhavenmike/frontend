@@ -11,7 +11,6 @@ export default function LinkForm({ token, onLinkSaved }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!url.startsWith('http')) return;
 
     try {
       setLoading(true);
@@ -34,8 +33,10 @@ export default function LinkForm({ token, onLinkSaved }) {
     <form onSubmit={handleSubmit} className="space-y-4 mb-10">
       <div className="flex flex-col sm:flex-row sm:space-x-4 space-y-4 sm:space-y-0">
         <input
-          type="url"
-          placeholder="https://example.com"
+          type="text"
+          inputMode="url"
+          pattern=".*"
+          placeholder="e.g. google.com or https://openai.com"
           value={url}
           onChange={(e) => setUrl(e.target.value)}
           required
