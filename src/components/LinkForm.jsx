@@ -38,7 +38,7 @@ export default function LinkForm({ token, onLinkSaved }) {
   type="text"
   inputMode="url"
   pattern=".*"
-  placeholder="⭐ Paste a link like google.com ⭐"
+  placeholder="⭐  Paste a link like google.com  ⭐"
   value={url}
   onChange={(e) => setUrl(e.target.value)}
   required
