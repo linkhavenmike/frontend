@@ -32,16 +32,17 @@ export default function LinkForm({ token, onLinkSaved }) {
   return (
     <form onSubmit={handleSubmit} className="space-y-4 mb-10">
       <div className="flex flex-col sm:flex-row sm:space-x-4 space-y-4 sm:space-y-0">
-        <input
-          type="text"
-          inputMode="url"
-          pattern=".*"
-          placeholder="e.g. google.com or https://openai.com"
-          value={url}
-          onChange={(e) => setUrl(e.target.value)}
-          required
-          className="flex-1 px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-        />
+      <input
+  type="text"
+  inputMode="url"
+  pattern=".*"
+  placeholder="https://example.com"
+  value={url}
+  onChange={(e) => setUrl(e.target.value)}
+  required
+  className="flex-1 px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+/>
+
         <select
           value={source}
           onChange={(e) => setSource(e.target.value)}
