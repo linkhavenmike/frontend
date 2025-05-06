@@ -33,7 +33,7 @@ export default function LinkForm({ token, onLinkSaved }) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4 mb-10">
-      <div className="flex flex-col sm:flex-row sm:space-x-4 space-y-4 sm:space-y-0">
+      <div className="flex flex-col space-y-4">
       <input
   type="text"
   inputMode="url"
