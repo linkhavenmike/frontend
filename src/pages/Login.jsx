@@ -1,9 +1,11 @@
 import { useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL;
 
-export default function Login({ onLogin, switchToSignup }) {
+export default function Login() {
+  const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -14,7 +16,7 @@ export default function Login({ onLogin, switchToSignup }) {
       const res = await axios.post(`${API_BASE}/api/login`, { email, password });
       const token = res.data.token;
       localStorage.setItem('token', token);
-      onLogin();
+      navigate('/dashboard');
     } catch (err) {
       setError('Invalid login credentials');
     }
@@ -50,9 +52,9 @@ export default function Login({ onLogin, switchToSignup }) {
           </button>
           <p className="text-center text-sm text-gray-500">
             Don’t have an account?{' '}
-            <button type="button" onClick={switchToSignup} className="text-indigo-600 font-medium hover:underline">
+            <Link to="/signup" className="text-indigo-600 font-medium hover:underline">
               Sign up
-            </button>
+            </Link>
           </p>
         </form>
       </div>
