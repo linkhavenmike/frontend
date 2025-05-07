@@ -1,21 +1,32 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
+import { useAuth } from '../context/AuthContext';
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL;
 
 export default function Login() {
   const navigate = useNavigate();
+  const { login, isAuthenticated } = useAuth(); // ✅ use context
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
+  // ✅ Redirect if already logged in
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/dashboard');
+    }
+  }, [isAuthenticated, navigate]);
+
   const handleLogin = async (e) => {
     e.preventDefault();
+    setError('');
     try {
       const res = await axios.post(`${API_BASE}/api/login`, { email, password });
-      const token = res.data.token;
-      localStorage.setItem('token', token);
+      const { token, user } = res.data;
+
+      login(token, user); // ✅ store in context + localStorage
       navigate('/dashboard');
     } catch (err) {
       setError('Invalid login credentials');

@@ -1,16 +1,23 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
-import { useAuth } from '../context/AuthContext'; // ✅ useAuth added
+import { useAuth } from '../context/AuthContext';
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL;
 
 export default function Signup() {
   const navigate = useNavigate();
-  const { login } = useAuth(); // ✅ grab login function from context
+  const { login, isAuthenticated } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+
+  // ✅ Redirect if already logged in
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/dashboard');
+    }
+  }, [isAuthenticated, navigate]);
 
   const handleSignup = async (e) => {
     e.preventDefault();
@@ -20,10 +27,7 @@ export default function Signup() {
 
       const { token, user } = response.data;
 
-      // ✅ Use context login (sets localStorage + state)
-      login(token, user);
-
-      // ✅ Redirect to dashboard
+      login(token, user); // ✅ Global login
       navigate('/dashboard');
     } catch (err) {
       console.error('Signup error:', err.response?.data || err.message);
