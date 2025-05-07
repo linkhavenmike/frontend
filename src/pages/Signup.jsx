@@ -1,22 +1,33 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
+import { useAuth } from '../context/AuthContext'; // ✅ useAuth added
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL;
 
 export default function Signup() {
   const navigate = useNavigate();
+  const { login } = useAuth(); // ✅ grab login function from context
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
   const handleSignup = async (e) => {
     e.preventDefault();
+    setError('');
     try {
-      await axios.post(`${API_BASE}/api/signup`, { email, password });
-      navigate('/login'); // ✅ Redirect to login after signup
+      const response = await axios.post(`${API_BASE}/api/signup`, { email, password });
+
+      const { token, user } = response.data;
+
+      // ✅ Use context login (sets localStorage + state)
+      login(token, user);
+
+      // ✅ Redirect to dashboard
+      navigate('/dashboard');
     } catch (err) {
-      setError('Signup failed. Please try again.');
+      console.error('Signup error:', err.response?.data || err.message);
+      setError(err.response?.data?.message || 'Signup failed. Please try again.');
     }
   };
 
