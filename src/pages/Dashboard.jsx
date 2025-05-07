@@ -1,21 +1,18 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import LinkForm from '../components/LinkForm.jsx';
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL;
 
 export default function Dashboard() {
+  const { token, logout } = useAuth(); // ✅ use token + logout from context
   const navigate = useNavigate();
-  const [token, setToken] = useState(localStorage.getItem('token'));
   const [savedLinks, setSavedLinks] = useState([]);
 
   useEffect(() => {
-    if (!token) {
-      navigate('/login');
-    } else {
-      fetchLinks();
-    }
-  }, [token]);
+    fetchLinks();
+  }, []);
 
   const fetchLinks = async () => {
     try {
@@ -30,14 +27,13 @@ export default function Dashboard() {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
-    setToken(null);
-    navigate('/login');
+    logout();           // ✅ clear context + localStorage
+    navigate('/login'); // ✅ optional: redirect after logout
   };
 
   return (
     <div className="min-h-screen bg-gray-50 font-sans px-4 py-12">
-      <div className="max-w-xl mx-auto bg-white shadow-xl rounded-2xl p-8">
+      <div className="max-w-xl mx-auto bg-white shadow-xl rounded-2xl p-8 relative">
         <h1 className="text-4xl font-extrabold text-center text-indigo-600 mb-8">Link Haven</h1>
 
         <button
@@ -47,10 +43,8 @@ export default function Dashboard() {
           Log out
         </button>
 
-        {/* 🔁 Use shared LinkForm here */}
         <LinkForm token={token} onLinkSaved={fetchLinks} />
 
-        {/* ✅ Display saved links */}
         {savedLinks.length > 0 && (
           <div className="mt-10">
             <h2 className="text-xl font-bold text-gray-800 mb-4">Saved Links</h2>
