@@ -1,9 +1,9 @@
 BEGIN:VCARD
 VERSION:3.0
 N:Haven;Link;;;
-FN:Link Haven11
-TEL;TYPE=CELL:(877) 870-5465
-ORG:Link Haven
+FN:Link Haven
+TEL;TYPE=CELL:(877)870-5465
 EMAIL:support@linkhaven.io
+ORG:Link Haven
 NOTE:Save links via SMS!
 END:VCARD
