@@ -19,13 +19,25 @@
       ]
     },
     {
-      "source": "/:path*",
-      "has": [
+      "source": "/**/*.js",
+      "headers": [
         {
-          "type": "file",
-          "value": ":path*"
+          "key": "cache-control",
+          "value": "public, max-age=31536000, immutable"
         }
-      ],
+      ]
+    },
+    {
+      "source": "/**/*.css",
+      "headers": [
+        {
+          "key": "cache-control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/**/*.woff2",
       "headers": [
         {
           "key": "cache-control",
