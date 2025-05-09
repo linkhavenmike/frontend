@@ -68,6 +68,14 @@ export default function Login() {
             </Link>
           </p>
         </form>
+        <a
+  href="/link-haven-contact.vcf"
+  download
+  className="mt-6 block text-center bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2 px-4 rounded-lg transition"
+>
+  📇 Save Link Haven Contact
+</a>
+
       </div>
     </div>
   );
