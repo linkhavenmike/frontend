@@ -19,7 +19,13 @@
       ]
     },
     {
-      "source": "/.*\\.(js|css|svg|png|jpg|jpeg|gif|woff2?|ttf|eot|ico|json)",
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "file",
+          "value": ":path*"
+        }
+      ],
       "headers": [
         {
           "key": "cache-control",
