@@ -15,10 +15,10 @@ export default function SmsOptIn() {
 
     try {
       await axios.post(`${API_BASE}/api/twilio/opt-in`, { phone });
-      setStatus('Successfully opted in for SMS updates!');
+      setStatus('✅ Successfully opted in for SMS updates!');
     } catch (err) {
       console.error(err);
-      setStatus('Failed to opt in. Please try again.');
+      setStatus('❌ Failed to opt in. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -44,8 +44,23 @@ export default function SmsOptIn() {
           >
             {loading ? 'Opting in...' : 'Opt In via SMS'}
           </button>
+
           {status && <p className="text-center text-sm text-gray-600">{status}</p>}
         </form>
+
+        {/* ✅ Terms & Conditions Notice */}
+        <p className="text-xs text-center text-gray-500 mt-6">
+          By opting in, you agree to our{' '}
+          <a
+            href="/terms"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline text-indigo-600 hover:text-indigo-800"
+          >
+            Terms & Conditions
+          </a>
+          . Msg & data rates may apply.
+        </p>
       </div>
     </div>
   );
