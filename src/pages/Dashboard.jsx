@@ -60,24 +60,26 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen bg-gray-50 px-4 py-10 font-sans">
       <div className="max-w-6xl mx-auto">
-        {/* Header */}
-        <div className="relative flex items-center justify-center mb-8">
-          {/* Mobile hamburger */}
-          <button
-            className="absolute left-0 md:hidden p-2"
-            onClick={() => setMobileMenuOpen(true)}
-          >
-            <span className="block w-6 h-0.5 bg-gray-600 mb-1"></span>
-            <span className="block w-6 h-0.5 bg-gray-600 mb-1"></span>
-            <span className="block w-6 h-0.5 bg-gray-600"></span>
-          </button>
-          <h1 className="text-4xl font-extrabold text-indigo-600">Link Haven</h1>
-          <button
-            onClick={handleLogout}
-            className="absolute right-0 text-sm text-gray-500 hover:text-gray-700"
-          >
-            Log out
-          </button>
+        {/* Header Wrapper (desktop width capped) */}
+        <div className="w-full md:w-3/4 lg:w-1/2 mx-auto">
+          <div className="relative flex items-center justify-center mb-8">
+            {/* Mobile hamburger */}
+            <button
+              className="absolute left-0 md:hidden p-2"
+              onClick={() => setMobileMenuOpen(true)}
+            >
+              <span className="block w-6 h-0.5 bg-gray-600 mb-1"></span>
+              <span className="block w-6 h-0.5 bg-gray-600 mb-1"></span>
+              <span className="block w-6 h-0.5 bg-gray-600"></span>
+            </button>
+            <h1 className="text-4xl font-extrabold text-indigo-600">Link Haven</h1>
+            <button
+              onClick={handleLogout}
+              className="absolute right-0 text-sm text-gray-500 hover:text-gray-700"
+            >
+              Log out
+            </button>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6 relative">
@@ -86,15 +88,13 @@ export default function Dashboard() {
             className={
               `fixed inset-y-0 left-0 bg-white w-1/2 max-w-xs p-4 overflow-y-auto z-50 transform transition-transform ` +
               (mobileMenuOpen ? 'translate-x-0' : '-translate-x-full') +
-              ' md:relative md:translate-x-0 md:col-span-3'
+              ' md:relative md:translate-x-0 md:col-span-3 md:bg-transparent md:p-0'
             }
           >
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-semibold text-gray-700">Categories</h2>
               {/* Close button on mobile */}
-              <button className="md:hidden" onClick={() => setMobileMenuOpen(false)}>
-                ✕
-              </button>
+              <button className="md:hidden" onClick={() => setMobileMenuOpen(false)}>✕</button>
             </div>
             <ul className="space-y-2">
               {categories.map((cat) => (
@@ -126,10 +126,13 @@ export default function Dashboard() {
           )}
 
           {/* Main Content */}
-          <main className="col-span-1 md:col-span-9 lg:col-span-6 bg-white rounded-lg shadow-sm p-8">
-            <LinkForm token={token} onLinkSaved={fetchLinks} />
+          <main className="col-span-1 md:col-span-9 lg:col-span-9 bg-white p-0 md:p-8">
+            {/* Input Bubble Wrapper (50% of main) */}
+            <div className="bg-white rounded-lg shadow-sm p-8 w-full md:w-1/2 mx-auto">
+              <LinkForm token={token} onLinkSaved={fetchLinks} />
+            </div>
 
-            <div className="mt-10">
+            <div className="mt-10 px-4 md:px-0">
               <h2 className="text-xl font-bold text-gray-800 mb-4">Timeline</h2>
               <div className="relative pl-8">
                 <div className="absolute top-2 left-4 h-full w-px bg-gray-300" />
