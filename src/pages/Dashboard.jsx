@@ -14,7 +14,7 @@ export default function Dashboard() {
   const [linksByCategory, setLinksByCategory] = useState([]);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  // fetch & filter
+  // Fetch & filter
   useEffect(() => { fetchLinks(); }, []);
   useEffect(() => {
     if (selectedCategory === 'All') setLinksByCategory(savedLinks);
@@ -52,7 +52,8 @@ export default function Dashboard() {
     <div className="min-h-screen bg-gray-50 px-4 py-10 font-sans">
       <div className="max-w-6xl mx-auto relative">
         {/* Header */}
-        <div className="relative flex items-center justify-center mb-8">
+        <div className="relative flex items-center justify-center mb-8
+                        w-full md:w-[85%] md:ml-[15%]">
           <button
             className="absolute left-0 md:hidden p-2"
             onClick={() => setMobileMenuOpen(true)}
@@ -72,14 +73,16 @@ export default function Dashboard() {
           </button>
         </div>
 
-        {/* Sidebar + Form */}
+        {/* Main: sidebar + content column */}
         <div className="relative mb-12 md:flex md:items-start">
-          {/* Sidebar (mobile fixed 50%, desktop static 15%) */}
+          {/* Sidebar */}
           <aside
             className={
               `fixed inset-y-0 left-0 w-1/2 h-full p-4 bg-white overflow-y-auto z-50 transform transition-transform ` +
               (mobileMenuOpen ? 'translate-x-0' : '-translate-x-full') +
-              ` md:relative md:translate-x-0 md:inset-auto md:left-auto md:w-[15%] md:h-auto md:bg-transparent md:overflow-visible md:transform-none`
+              ` md:relative md:translate-x-0 md:inset-auto md:left-auto
+                 md:w-[15%] md:h-auto md:bg-transparent md:overflow-visible
+                 md:transform-none`
             }
           >
             <div className="flex items-center justify-between mb-4 md:block">
@@ -118,44 +121,52 @@ export default function Dashboard() {
             />
           )}
 
-          {/* Form (mobile full-width, desktop centered in remaining 85%) */}
-          <div className="flex justify-center md:flex-1">
-            <div className="bg-white rounded-lg shadow-sm pt-8 pb-4 px-6 w-full md:w-2/3">
-              <LinkForm token={token} onLinkSaved={fetchLinks} />
+          {/* Content column (form + timeline) */}
+          <div className="md:flex-1 flex flex-col items-center">
+            {/* Form bubble */}
+            <div className="w-full md:w-2/3">
+              <div className="bg-white rounded-lg shadow-sm pt-8 pb-4 px-6">
+                <LinkForm token={token} onLinkSaved={fetchLinks} />
+              </div>
             </div>
-          </div>
-        </div>
 
-        {/* Timeline – under form, same centering */}
-        <div className="w-full md:w-2/3 mx-auto">
-          <h2 className="text-xl font-bold text-gray-800 mb-4">Timeline</h2>
-          <div className="relative pl-8">
-            <div className="absolute top-2 left-4 h-full w-px bg-gray-300" />
-            <ul className="space-y-8">
-              {linksByCategory.map(link => (
-                <li key={link._id} className="relative">
-                  <span className="absolute -left-[3px] top-1 w-6 h-6 bg-indigo-600 rounded-full flex items-center justify-center text-white text-sm" />
-                  <div className="pl-8">
-                    <div className="text-xs text-gray-600 mb-1" style={{ fontSize: '10pt' }}>
-                      {formatDate(link.createdAt || link.date)}
-                    </div>
-                    <a
-                      href={link.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="font-medium text-indigo-600 hover:underline break-words"
-                    >
-                      {link.url}
-                    </a>
-                    <div className="text-sm text-gray-500 mt-1 flex space-x-2">
-                      <span className="italic">{link.category || 'Uncategorized'}</span>
-                      <span>•</span>
-                      <span>{link.source}</span>
-                    </div>
-                  </div>
-                </li>
-              ))}
-            </ul>
+            {/* Timeline – starts under the form, same width */}
+            <div className="w-full md:w-2/3 mt-8">
+              <h2 className="text-xl font-bold text-gray-800 mb-4">Timeline</h2>
+              <div className="relative pl-8">
+                <div className="absolute top-2 left-4 h-full w-px bg-gray-300" />
+                <ul className="space-y-8">
+                  {linksByCategory.map(link => (
+                    <li key={link._id} className="relative">
+                      <span className="absolute -left-[3px] top-1 w-6 h-6
+                                       bg-indigo-600 rounded-full flex items-center
+                                       justify-center text-white text-sm" />
+                      <div className="pl-8">
+                        <div className="text-xs text-gray-600 mb-1"
+                             style={{ fontSize: '10pt' }}>
+                          {formatDate(link.createdAt || link.date)}
+                        </div>
+                        <a
+                          href={link.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="font-medium text-indigo-600 hover:underline break-words"
+                        >
+                          {link.url}
+                        </a>
+                        <div className="text-sm text-gray-500 mt-1 flex space-x-2">
+                          <span className="italic">
+                            {link.category || 'Uncategorized'}
+                          </span>
+                          <span>•</span>
+                          <span>{link.source}</span>
+                        </div>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
           </div>
         </div>
       </div>
