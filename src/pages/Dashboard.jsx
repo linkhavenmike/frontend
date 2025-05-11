@@ -14,7 +14,7 @@ export default function Dashboard() {
   const [linksByCategory, setLinksByCategory] = useState([]);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  // Load & filter
+  // fetch & filter
   useEffect(() => { fetchLinks(); }, []);
   useEffect(() => {
     if (selectedCategory === 'All') setLinksByCategory(savedLinks);
@@ -31,7 +31,7 @@ export default function Dashboard() {
       });
       setSavedLinks(await res.json());
     } catch (err) {
-      console.error(err);
+      console.error('Failed to load links:', err);
     }
   };
 
@@ -74,11 +74,13 @@ export default function Dashboard() {
 
         {/* Categories + Form wrapper */}
         <div className="relative mb-12">
-          {/* Categories – absolutely removed from flow */}
+          {/* mobile sidebar (50% width, full height) / desktop static */}
           <aside
-            className={`absolute inset-y-0 left-0 w-1/2 max-w-xs p-4 bg-white overflow-y-auto z-50 transform transition-transform ${
-              mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
-            } md:translate-x-0 md:w-[15%] md:max-w-none md:bg-transparent md:overflow-visible`}
+            className={
+              `fixed inset-y-0 left-0 w-1/2 h-full p-4 bg-white overflow-y-auto z-50 transform transition-transform ` +
+              (mobileMenuOpen ? 'translate-x-0' : '-translate-x-full') +
+              ` md:relative md:inset-auto md:left-auto md:w-[15%] md:h-auto md:bg-transparent md:overflow-visible md:transform-none`
+            }
           >
             <div className="flex items-center justify-between mb-4 md:block">
               <h2 className="text-lg font-semibold text-gray-700">Categories</h2>
@@ -111,12 +113,12 @@ export default function Dashboard() {
           </aside>
           {mobileMenuOpen && (
             <div
-              className="fixed inset-0 bg-black bg-opacity-20 z-40 md:hidden"
+              className="fixed inset-0 bg-black bg-opacity-20 z-40"
               onClick={() => setMobileMenuOpen(false)}
             />
           )}
 
-          {/* Form – in normal flow, centered in parent */}
+          {/* Form – always at top, centered under header */}
           <div className="flex justify-center">
             <div className="bg-white rounded-lg shadow-sm pt-8 pb-4 px-6 w-full md:w-2/3">
               <LinkForm token={token} onLinkSaved={fetchLinks} />
@@ -124,7 +126,7 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Timeline – directly under the form, same centering */}
+        {/* Timeline – aligned under form */}
         <div className="w-full md:w-2/3 mx-auto">
           <h2 className="text-xl font-bold text-gray-800 mb-4">Timeline</h2>
           <div className="relative pl-8">
