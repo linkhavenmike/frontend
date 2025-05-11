@@ -13,7 +13,6 @@ export default function Dashboard() {
   const [linksByCategory, setLinksByCategory] = useState([]);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  // Fetch & filter
   useEffect(() => { fetchLinks(); }, []);
   useEffect(() => {
     if (selectedCategory === 'All') setLinksByCategory(savedLinks);
@@ -30,12 +29,12 @@ export default function Dashboard() {
       });
       setSavedLinks(await res.json());
     } catch (err) {
-      console.error(err);
+      console.error('Failed to load links:', err);
     }
   };
+
   const handleLogout = () => { logout(); navigate('/login'); };
 
-  // Categories
   const uniqueCats = Array.from(
     new Set(savedLinks.map(l => l.category).filter(Boolean))
   );
@@ -46,8 +45,8 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-gray-50 px-4 py-10 font-sans">
-      <div className="max-w-6xl mx-auto">
-        {/* — Header — */}
+      <div className="max-w-6xl mx-auto relative">
+        {/* Header */}
         <div className="relative flex items-center justify-center mb-8">
           <button
             className="absolute left-0 md:hidden p-2"
@@ -57,9 +56,7 @@ export default function Dashboard() {
             <span className="block w-6 h-0.5 bg-gray-600 mb-1" />
             <span className="block w-6 h-0.5 bg-gray-600" />
           </button>
-
           <h1 className="text-4xl font-extrabold text-indigo-600">Link Haven</h1>
-
           <button
             onClick={handleLogout}
             className="absolute right-0 text-sm text-gray-500 hover:text-gray-700"
@@ -68,99 +65,83 @@ export default function Dashboard() {
           </button>
         </div>
 
-        {/* — Top Row: Sidebar + (absolutely-positioned) Centered Form — */}
-        <div className="flex relative mb-8">
-          {/* Sidebar (slides in on mobile, static on desktop) */}
-          <aside
-            className={
-              `fixed inset-y-0 left-0 w-1/2 max-w-xs p-4 bg-white overflow-y-auto z-50 transform transition-transform ` +
-              (mobileMenuOpen ? 'translate-x-0' : '-translate-x-full') +
-              ' md:relative md:translate-x-0 md:w-[20%] md:max-w-none md:bg-transparent md:overflow-visible md:transform-none'
-            }
-          >
-            <div className="flex items-center justify-between mb-4 md:block">
-              <h2 className="text-lg font-semibold text-gray-700">Categories</h2>
-              <button
-                className="md:hidden"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                ✕
-              </button>
-            </div>
-            <ul className="space-y-2">
-              {categories.map(cat => (
-                <li key={cat}>
-                  <button
-                    onClick={() => {
-                      setSelectedCategory(cat);
-                      setMobileMenuOpen(false);
-                    }}
-                    className={`w-full text-left px-3 py-2 rounded-md ${
-                      selectedCategory === cat
-                        ? 'bg-indigo-600 text-white'
-                        : 'text-gray-700 hover:bg-gray-100'
-                    }`}
-                  >
-                    {cat}
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </aside>
-          {mobileMenuOpen && (
-            <div
-              className="fixed inset-0 bg-black bg-opacity-20 z-40"
-              onClick={() => setMobileMenuOpen(false)}
-            />
-          )}
+        {/* Sidebar */}
+        <aside
+          className={
+            `fixed inset-y-0 left-0 w-1/2 max-w-xs p-4 bg-white overflow-y-auto z-50 transform transition-transform ` +
+            (mobileMenuOpen ? 'translate-x-0' : '-translate-x-full') +
+            ' md:relative md:translate-x-0 md:w-[20%] md:max-w-none md:bg-transparent md:overflow-visible md:transform-none'
+          }
+        >
+          <div className="flex items-center justify-between mb-4 md:block">
+            <h2 className="text-lg font-semibold text-gray-700">Categories</h2>
+            <button className="md:hidden" onClick={() => setMobileMenuOpen(false)}>✕</button>
+          </div>
+          <ul className="space-y-2">
+            {categories.map(cat => (
+              <li key={cat}>
+                <button
+                  onClick={() => {
+                    setSelectedCategory(cat);
+                    setMobileMenuOpen(false);
+                  }}
+                  className={`w-full text-left px-3 py-2 rounded-md ${
+                    selectedCategory === cat
+                      ? 'bg-indigo-600 text-white'
+                      : 'text-gray-700 hover:bg-gray-100'
+                  }`}
+                >
+                  {cat}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </aside>
+        {mobileMenuOpen && (
+          <div
+            className="fixed inset-0 bg-black bg-opacity-20 z-40"
+            onClick={() => setMobileMenuOpen(false)}
+          />
+        )}
 
-          {/* Form wrapper is taken out of flow, absolutely centered */}
-          <div className="flex-1 relative">
-            <div className="absolute inset-x-0 top-0 flex justify-center">
-              <div className="bg-white rounded-lg shadow-sm pt-8 pb-4 px-6 w-full md:w-2/3">
-                <LinkForm token={token} onLinkSaved={fetchLinks} />
-              </div>
-            </div>
-            {/* push everything below the form */}
-            <div className="pt-[200px]" />
+        {/* Centered Form Bubble */}
+        <div className="flex justify-center mb-8">
+          <div className="bg-white rounded-lg shadow-sm pt-8 pb-4 px-6 w-full md:w-2/3">
+            <LinkForm token={token} onLinkSaved={fetchLinks} />
           </div>
         </div>
 
-        {/* — Timeline Row — */}
-        <div className="flex">
-          {/* empty gutter where the sidebar lives */}
-          <div className="hidden md:block w-[20%]" />
-          <main className="flex-1">
-            <h2 className="text-xl font-bold text-gray-800 mb-4">Timeline</h2>
-            <div className="relative pl-8">
-              <div className="absolute top-2 left-4 h-full w-px bg-gray-300" />
-              <ul className="space-y-8">
-                {linksByCategory.map(link => (
-                  <li key={link._id} className="relative">
-                    <span className="absolute -left-[3px] top-1 w-6 h-6 bg-indigo-600 rounded-full flex items-center justify-center text-white text-sm" />
-                    <div className="pl-8">
-                      <div className="text-xs text-gray-600 mb-1" style={{ fontSize: '10pt' }}>
-                        {formatDate(link.createdAt || link.date)}
-                      </div>
-                      <a
-                        href={link.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="font-medium text-indigo-600 hover:underline break-words"
-                      >
-                        {link.url}
-                      </a>
-                      <div className="text-sm text-gray-500 mt-1 flex space-x-2">
-                        <span className="italic">{link.category || 'Uncategorized'}</span>
-                        <span>•</span>
-                        <span>{link.source}</span>
-                      </div>
+        {/* Timeline – aligned under the form */}
+        <div className="w-full md:w-2/3 mx-auto">
+          <h2 className="text-xl font-bold text-gray-800 mb-4">Timeline</h2>
+          <div className="relative pl-8">
+            <div className="absolute top-2 left-4 h-full w-px bg-gray-300" />
+            <ul className="space-y-8">
+              {linksByCategory.map(link => (
+                <li key={link._id} className="relative">
+                  <span className="absolute -left-[3px] top-1 w-6 h-6 bg-indigo-600 rounded-full flex items-center justify-center text-white text-sm" />
+                  <div className="pl-8">
+                    <div className="text-xs text-gray-600 mb-1" style={{ fontSize: '10pt' }}>
+                      {formatDate(link.createdAt || link.date)}
                     </div>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </main>
+                    <a
+                      href={link.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-medium text-indigo-600 hover:underline break-words"
+                    >
+                      {link.url}
+                    </a>
+                    <div className="text-sm text-gray-500 mt-1 flex space-x-2">
+                      <span className="italic">{link.category || 'Uncategorized'}</span>
+                      <span>•</span>
+                      <span>{link.source}</span>
+                    </div>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
       </div>
     </div>
