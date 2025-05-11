@@ -8,11 +8,13 @@ const API_BASE = import.meta.env.VITE_API_BASE_URL;
 export default function Dashboard() {
   const { token, logout } = useAuth();
   const navigate = useNavigate();
+
   const [savedLinks, setSavedLinks] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [linksByCategory, setLinksByCategory] = useState([]);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
+  // Load & filter
   useEffect(() => { fetchLinks(); }, []);
   useEffect(() => {
     if (selectedCategory === 'All') setLinksByCategory(savedLinks);
@@ -29,11 +31,14 @@ export default function Dashboard() {
       });
       setSavedLinks(await res.json());
     } catch (err) {
-      console.error('Failed to load links:', err);
+      console.error(err);
     }
   };
 
-  const handleLogout = () => { logout(); navigate('/login'); };
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
 
   const uniqueCats = Array.from(
     new Set(savedLinks.map(l => l.category).filter(Boolean))
@@ -56,7 +61,9 @@ export default function Dashboard() {
             <span className="block w-6 h-0.5 bg-gray-600 mb-1" />
             <span className="block w-6 h-0.5 bg-gray-600" />
           </button>
+
           <h1 className="text-4xl font-extrabold text-indigo-600">Link Haven</h1>
+
           <button
             onClick={handleLogout}
             className="absolute right-0 text-sm text-gray-500 hover:text-gray-700"
@@ -65,53 +72,59 @@ export default function Dashboard() {
           </button>
         </div>
 
-        {/* Sidebar */}
-        <aside
-          className={
-            `fixed inset-y-0 left-0 w-1/2 max-w-xs p-4 bg-white overflow-y-auto z-50 transform transition-transform ` +
-            (mobileMenuOpen ? 'translate-x-0' : '-translate-x-full') +
-            ' md:relative md:translate-x-0 md:w-[20%] md:max-w-none md:bg-transparent md:overflow-visible md:transform-none'
-          }
-        >
-          <div className="flex items-center justify-between mb-4 md:block">
-            <h2 className="text-lg font-semibold text-gray-700">Categories</h2>
-            <button className="md:hidden" onClick={() => setMobileMenuOpen(false)}>✕</button>
-          </div>
-          <ul className="space-y-2">
-            {categories.map(cat => (
-              <li key={cat}>
-                <button
-                  onClick={() => {
-                    setSelectedCategory(cat);
-                    setMobileMenuOpen(false);
-                  }}
-                  className={`w-full text-left px-3 py-2 rounded-md ${
-                    selectedCategory === cat
-                      ? 'bg-indigo-600 text-white'
-                      : 'text-gray-700 hover:bg-gray-100'
-                  }`}
-                >
-                  {cat}
-                </button>
-              </li>
-            ))}
-          </ul>
-        </aside>
-        {mobileMenuOpen && (
-          <div
-            className="fixed inset-0 bg-black bg-opacity-20 z-40"
-            onClick={() => setMobileMenuOpen(false)}
-          />
-        )}
+        {/* Categories + Form wrapper */}
+        <div className="relative mb-12">
+          {/* Categories – absolutely removed from flow */}
+          <aside
+            className={`absolute inset-y-0 left-0 w-1/2 max-w-xs p-4 bg-white overflow-y-auto z-50 transform transition-transform ${
+              mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
+            } md:translate-x-0 md:w-[15%] md:max-w-none md:bg-transparent md:overflow-visible`}
+          >
+            <div className="flex items-center justify-between mb-4 md:block">
+              <h2 className="text-lg font-semibold text-gray-700">Categories</h2>
+              <button
+                className="md:hidden"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                ✕
+              </button>
+            </div>
+            <ul className="space-y-2">
+              {categories.map(cat => (
+                <li key={cat}>
+                  <button
+                    onClick={() => {
+                      setSelectedCategory(cat);
+                      setMobileMenuOpen(false);
+                    }}
+                    className={`w-full text-left px-3 py-2 rounded-md ${
+                      selectedCategory === cat
+                        ? 'bg-indigo-600 text-white'
+                        : 'text-gray-700 hover:bg-gray-100'
+                    }`}
+                  >
+                    {cat}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </aside>
+          {mobileMenuOpen && (
+            <div
+              className="fixed inset-0 bg-black bg-opacity-20 z-40 md:hidden"
+              onClick={() => setMobileMenuOpen(false)}
+            />
+          )}
 
-        {/* Centered Form Bubble */}
-        <div className="flex justify-center mb-8">
-          <div className="bg-white rounded-lg shadow-sm pt-8 pb-4 px-6 w-full md:w-2/3">
-            <LinkForm token={token} onLinkSaved={fetchLinks} />
+          {/* Form – in normal flow, centered in parent */}
+          <div className="flex justify-center">
+            <div className="bg-white rounded-lg shadow-sm pt-8 pb-4 px-6 w-full md:w-2/3">
+              <LinkForm token={token} onLinkSaved={fetchLinks} />
+            </div>
           </div>
         </div>
 
-        {/* Timeline – aligned under the form */}
+        {/* Timeline – directly under the form, same centering */}
         <div className="w-full md:w-2/3 mx-auto">
           <h2 className="text-xl font-bold text-gray-800 mb-4">Timeline</h2>
           <div className="relative pl-8">
