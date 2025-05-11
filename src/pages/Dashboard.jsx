@@ -13,18 +13,13 @@ export default function Dashboard() {
   const [linksByCategory, setLinksByCategory] = useState([]);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
+  useEffect(() => { fetchLinks(); }, []);
   useEffect(() => {
-    fetchLinks();
-  }, []);
-
-  useEffect(() => {
-    if (selectedCategory === 'All') {
-      setLinksByCategory(savedLinks);
-    } else if (selectedCategory === 'Uncategorized') {
+    if (selectedCategory === 'All') setLinksByCategory(savedLinks);
+    else if (selectedCategory === 'Uncategorized')
       setLinksByCategory(savedLinks.filter((l) => !l.category));
-    } else {
+    else
       setLinksByCategory(savedLinks.filter((l) => l.category === selectedCategory));
-    }
   }, [savedLinks, selectedCategory]);
 
   const fetchLinks = async () => {
@@ -32,8 +27,7 @@ export default function Dashboard() {
       const res = await fetch(`${API_BASE}/api/links`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      const data = await res.json();
-      setSavedLinks(data);
+      setSavedLinks(await res.json());
     } catch (err) {
       console.error('Failed to load links:', err);
     }
@@ -49,10 +43,7 @@ export default function Dashboard() {
   );
   const categories = ['All', ...uniqueCategories, 'Uncategorized'];
 
-  const formatDate = (iso) => {
-    const d = new Date(iso);
-    return d.toLocaleDateString('en-US');
-  };
+  const formatDate = (iso) => new Date(iso).toLocaleDateString('en-US');
 
   return (
     <div className="min-h-screen bg-gray-50 px-4 py-10 font-sans">
@@ -78,21 +69,14 @@ export default function Dashboard() {
           </button>
         </div>
 
-        {/* Centered Form */}
-        <div className="flex justify-center mb-8">
-          <div className="bg-white rounded-lg shadow-sm pt-8 pb-4 px-6 w-full md:w-2/3">
-            <LinkForm token={token} onLinkSaved={fetchLinks} />
-          </div>
-        </div>
-
-        {/* Grid: sidebar + timeline */}
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 relative">
-          {/* Sidebar */}
+        {/* Sidebar + Content */}
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+          {/* Categories */}
           <aside
             className={
               `fixed inset-y-0 left-0 bg-white w-1/2 max-w-xs p-4 overflow-y-auto z-50 transform transition-transform ` +
               (mobileMenuOpen ? 'translate-x-0' : '-translate-x-full') +
-              ' md:relative md:translate-x-0 md:col-span-3 md:bg-transparent md:p-0'
+              ' md:relative md:translate-x-0 md:col-span-3 md:w-auto md:max-w-none md:bg-transparent md:p-0'
             }
           >
             <div className="flex items-center justify-between mb-4">
@@ -120,6 +104,7 @@ export default function Dashboard() {
             </ul>
           </aside>
 
+          {/* Mobile overlay */}
           {mobileMenuOpen && (
             <div
               className="fixed inset-0 bg-black bg-opacity-20 z-40 md:hidden"
@@ -127,8 +112,16 @@ export default function Dashboard() {
             />
           )}
 
-          {/* Timeline */}
-          <main className="col-span-1 md:col-span-9 lg:col-span-9 p-0">
+          {/* Main (form + timeline) */}
+          <div className="md:col-span-9">
+            {/* Centered Form (50% width on desktop) */}
+            <div className="flex justify-center mb-8">
+              <div className="bg-white rounded-lg shadow-sm pt-8 pb-4 px-6 w-full md:w-1/2">
+                <LinkForm token={token} onLinkSaved={fetchLinks} />
+              </div>
+            </div>
+
+            {/* Timeline */}
             <div className="mt-6 px-4 md:px-0">
               <h2 className="text-xl font-bold text-gray-800 mb-4">Timeline</h2>
               <div className="relative pl-8">
@@ -160,7 +153,7 @@ export default function Dashboard() {
                 </ul>
               </div>
             </div>
-          </main>
+          </div>
         </div>
       </div>
     </div>
