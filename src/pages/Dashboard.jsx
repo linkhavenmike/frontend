@@ -14,15 +14,16 @@ export default function Dashboard() {
   const [linksByCategory, setLinksByCategory] = useState([]);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
+  // Fetch & filter
   useEffect(() => { fetchLinks(); }, []);
   useEffect(() => {
-    if (selectedCategory === 'All') {
-      setLinksByCategory(savedLinks);
-    } else if (selectedCategory === 'Uncategorized') {
-      setLinksByCategory(savedLinks.filter(l => !l.category));
-    } else {
-      setLinksByCategory(savedLinks.filter(l => l.category === selectedCategory));
+    let filtered = savedLinks;
+    if (selectedCategory === 'Uncategorized') {
+      filtered = savedLinks.filter(l => !l.category);
+    } else if (selectedCategory !== 'All') {
+      filtered = savedLinks.filter(l => l.category === selectedCategory);
     }
+    setLinksByCategory(filtered);
   }, [savedLinks, selectedCategory]);
 
   const fetchLinks = async () => {
@@ -49,7 +50,7 @@ export default function Dashboard() {
   const formatDate = iso =>
     new Date(iso).toLocaleDateString('en-US');
 
-  // group links by date string
+  // Group links by display date
   const groupedLinks = linksByCategory.reduce((acc, link) => {
     const d = formatDate(link.createdAt || link.date);
     if (!acc[d]) acc[d] = [];
@@ -61,10 +62,8 @@ export default function Dashboard() {
     <div className="min-h-screen bg-gray-50 px-4 py-10 font-sans">
       <div className="max-w-6xl mx-auto relative">
         {/* Header */}
-        <div
-          className="relative flex items-center justify-center mb-8
-                     w-full md:w-[85%] md:ml-[15%]"
-        >
+        <div className="relative flex items-center justify-center mb-8
+                        w-full md:w-[85%] md:ml-[15%]">
           <button
             className="absolute left-0 md:hidden p-2"
             onClick={() => setMobileMenuOpen(true)}
@@ -137,7 +136,7 @@ export default function Dashboard() {
             />
           )}
 
-          {/* Content column */}
+          {/* Content col */}
           <div className="md:flex-1 flex flex-col items-center">
             {/* Form */}
             <div className="w-full md:w-2/3">
@@ -151,7 +150,6 @@ export default function Dashboard() {
               <h2 className="text-xl font-bold text-gray-800 mb-4">
                 Timeline
               </h2>
-
               <div className="space-y-8">
                 {Object.entries(groupedLinks).map(([date, links]) => (
                   <div key={date} className="flex items-start">
@@ -159,36 +157,33 @@ export default function Dashboard() {
                     <div className="w-24 text-sm font-semibold text-gray-600">
                       {date}
                     </div>
-
-                    {/* Links & vertical line */}
+                    {/* Links column */}
                     <div className="relative flex-1">
-                      {/* vertical line */}
-                      <div className="absolute top-1 left-0 h-full w-px bg-gray-300" />
+                      {/* Vertical line */}
+                      <div className="absolute top-0 left-0 h-full w-px bg-gray-300" />
 
-                      <ul className="pl-8 space-y-6">
+                      <ul className="space-y-6">
                         {links.map(link => (
-                          <li key={link._id} className="relative">
-                            <span
-                              className="absolute -left-[9px] top-1 w-5 h-5
-                                         bg-indigo-600 rounded-full flex items-center
-                                         justify-center text-white text-xs"
-                            />
-                            <div>
-                              <a
-                                href={link.url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="font-medium text-indigo-600 hover:underline break-words"
-                              >
-                                {link.url}
-                              </a>
-                              <div className="text-sm text-gray-500 mt-1 flex space-x-2">
-                                <span className="italic">
-                                  {link.category || 'Uncategorized'}
-                                </span>
-                                <span>•</span>
-                                <span>{link.source}</span>
-                              </div>
+                          <li key={link._id} className="relative pl-8">
+                            {/* Dot, 25% smaller */}
+                            <span className="absolute left-0 top-1 w-5 h-5 bg-indigo-600 rounded-full" />
+
+                            {/* Display only hostname */}
+                            <a
+                              href={link.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="ml-2 font-medium text-indigo-600 hover:underline break-words"
+                            >
+                              {new URL(link.url).hostname}
+                            </a>
+
+                            <div className="text-sm text-gray-500 ml-2 mt-1 space-x-2 flex">
+                              <span className="italic">
+                                {link.category || 'Uncategorized'}
+                              </span>
+                              <span>•</span>
+                              <span>{link.source}</span>
                             </div>
                           </li>
                         ))}
