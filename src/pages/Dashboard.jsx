@@ -14,16 +14,14 @@ export default function Dashboard() {
   const [linksByCategory, setLinksByCategory] = useState([]);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  // Fetch links
   useEffect(() => { fetchLinks(); }, []);
-  // Filter links by category
   useEffect(() => {
     if (selectedCategory === 'All') {
       setLinksByCategory(savedLinks);
     } else if (selectedCategory === 'Uncategorized') {
-      setLinksByCategory(savedLinks.filter((l) => !l.category));
+      setLinksByCategory(savedLinks.filter(l => !l.category));
     } else {
-      setLinksByCategory(savedLinks.filter((l) => l.category === selectedCategory));
+      setLinksByCategory(savedLinks.filter(l => l.category === selectedCategory));
     }
   }, [savedLinks, selectedCategory]);
 
@@ -44,26 +42,29 @@ export default function Dashboard() {
   };
 
   const uniqueCats = Array.from(
-    new Set(savedLinks.map((l) => l.category).filter(Boolean))
+    new Set(savedLinks.map(l => l.category).filter(Boolean))
   );
   const categories = ['All', ...uniqueCats, 'Uncategorized'];
 
-  const formatDate = (iso) => new Date(iso).toLocaleDateString('en-US');
+  const formatDate = iso =>
+    new Date(iso).toLocaleDateString('en-US');
 
-  // Group by formatted date
-  const groupedLinks = linksByCategory.reduce((groups, link) => {
-    const date = formatDate(link.createdAt || link.date);
-    if (!groups[date]) groups[date] = [];
-    groups[date].push(link);
-    return groups;
+  // group links by date string
+  const groupedLinks = linksByCategory.reduce((acc, link) => {
+    const d = formatDate(link.createdAt || link.date);
+    if (!acc[d]) acc[d] = [];
+    acc[d].push(link);
+    return acc;
   }, {});
 
   return (
     <div className="min-h-screen bg-gray-50 px-4 py-10 font-sans">
       <div className="max-w-6xl mx-auto relative">
         {/* Header */}
-        <div className="relative flex items-center justify-center mb-8
-                        w-full md:w-[85%] md:ml-[15%]">
+        <div
+          className="relative flex items-center justify-center mb-8
+                     w-full md:w-[85%] md:ml-[15%]"
+        >
           <button
             className="absolute left-0 md:hidden p-2"
             onClick={() => setMobileMenuOpen(true)}
@@ -73,7 +74,9 @@ export default function Dashboard() {
             <span className="block w-6 h-0.5 bg-gray-600" />
           </button>
 
-          <h1 className="text-4xl font-extrabold text-indigo-600">Link Haven</h1>
+          <h1 className="text-4xl font-extrabold text-indigo-600">
+            Link Haven
+          </h1>
 
           <button
             onClick={handleLogout}
@@ -88,7 +91,8 @@ export default function Dashboard() {
           {/* Sidebar */}
           <aside
             className={
-              `fixed inset-y-0 left-0 w-1/2 h-full p-4 bg-white overflow-y-auto z-50 transform transition-transform ` +
+              `fixed inset-y-0 left-0 w-1/2 h-full p-4 bg-white overflow-y-auto z-50
+               transform transition-transform ` +
               (mobileMenuOpen ? 'translate-x-0' : '-translate-x-full') +
               ` md:relative md:translate-x-0 md:inset-auto md:left-auto
                  md:w-[15%] md:h-auto md:bg-transparent md:overflow-visible
@@ -96,7 +100,9 @@ export default function Dashboard() {
             }
           >
             <div className="flex items-center justify-between mb-4 md:block">
-              <h2 className="text-lg font-semibold text-gray-700">Categories</h2>
+              <h2 className="text-lg font-semibold text-gray-700">
+                Categories
+              </h2>
               <button
                 className="md:hidden"
                 onClick={() => setMobileMenuOpen(false)}
@@ -105,7 +111,7 @@ export default function Dashboard() {
               </button>
             </div>
             <ul className="space-y-2">
-              {categories.map((cat) => (
+              {categories.map(cat => (
                 <li key={cat}>
                   <button
                     onClick={() => {
@@ -133,7 +139,7 @@ export default function Dashboard() {
 
           {/* Content column */}
           <div className="md:flex-1 flex flex-col items-center">
-            {/* Form bubble */}
+            {/* Form */}
             <div className="w-full md:w-2/3">
               <div className="bg-white rounded-lg shadow-sm pt-8 pb-4 px-6">
                 <LinkForm token={token} onLinkSaved={fetchLinks} />
@@ -142,41 +148,52 @@ export default function Dashboard() {
 
             {/* Timeline */}
             <div className="w-full md:w-2/3 mt-8">
-              <h2 className="text-xl font-bold text-gray-800 mb-4">Timeline</h2>
-              <div className="relative pl-8">
-                {/* vertical line */}
-                <div className="absolute top-2 left-4 h-full w-px bg-gray-300" />
+              <h2 className="text-xl font-bold text-gray-800 mb-4">
+                Timeline
+              </h2>
 
-                {/* grouped by date */}
+              <div className="space-y-8">
                 {Object.entries(groupedLinks).map(([date, links]) => (
-                  <div key={date} className="mb-8">
-                    <div className="text-xs text-gray-600 mb-2">{date}</div>
-                    <ul className="space-y-6">
-                      {links.map((link) => (
-                        <li key={link._id} className="relative">
-                          <span
-                            className="absolute -left-[3px] top-1 w-6 h-6
-                                       bg-indigo-600 rounded-full flex items-center
-                                       justify-center text-white text-sm"
-                          />
-                          <div className="pl-8">
-                            <a
-                              href={link.url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="font-medium text-indigo-600 hover:underline break-words"
-                            >
-                              {link.url}
-                            </a>
-                            <div className="text-sm text-gray-500 mt-1 flex space-x-2">
-                              <span className="italic">{link.category || 'Uncategorized'}</span>
-                              <span>•</span>
-                              <span>{link.source}</span>
+                  <div key={date} className="flex items-start">
+                    {/* Date column */}
+                    <div className="w-24 text-sm font-semibold text-gray-600">
+                      {date}
+                    </div>
+
+                    {/* Links & vertical line */}
+                    <div className="relative flex-1">
+                      {/* vertical line */}
+                      <div className="absolute top-1 left-0 h-full w-px bg-gray-300" />
+
+                      <ul className="pl-8 space-y-6">
+                        {links.map(link => (
+                          <li key={link._id} className="relative">
+                            <span
+                              className="absolute -left-[9px] top-1 w-5 h-5
+                                         bg-indigo-600 rounded-full flex items-center
+                                         justify-center text-white text-xs"
+                            />
+                            <div>
+                              <a
+                                href={link.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="font-medium text-indigo-600 hover:underline break-words"
+                              >
+                                {link.url}
+                              </a>
+                              <div className="text-sm text-gray-500 mt-1 flex space-x-2">
+                                <span className="italic">
+                                  {link.category || 'Uncategorized'}
+                                </span>
+                                <span>•</span>
+                                <span>{link.source}</span>
+                              </div>
                             </div>
-                          </div>
-                        </li>
-                      ))}
-                    </ul>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
                   </div>
                 ))}
               </div>
