@@ -152,44 +152,44 @@ export default function Dashboard() {
               <h2 className="text-xl font-bold text-gray-800 mb-4">
                 Timeline
               </h2>
-              <div className="space-y-8">
-                {Object.entries(groupedLinks).map(([date, links]) => (
-                  <div key={date} className="space-y-4">
-                    {links.map((link, idx) => (
+              <div className="relative">
+                {/* continuous vertical line */}
+                <div className="absolute left-24 top-0 bottom-0 w-px bg-gray-300" />
+
+                <div className="space-y-4">
+                  {Object.entries(groupedLinks).map(([date, links]) =>
+                    links.map((link, idx) => (
                       <div key={link._id} className="flex items-center">
-                        {/* Date only on first entry */}
+                        {/* date only on first of group */}
                         <div className="w-24 text-sm font-semibold text-gray-600">
                           {idx === 0 ? date : ''}
                         </div>
 
-                        {/* Vertical line segment */}
-                        <div className="w-px h-5 bg-gray-300 mx-4" />
-
-                        {/* Dot */}
-                        <div className="w-4 h-4 bg-indigo-600 rounded-full mr-4 flex-shrink-0" />
-
-                        {/* Link */}
-                        <div className="flex-1">
-                          <a
-                            href={link.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="font-medium text-indigo-600 hover:underline break-words"
-                          >
-                            {new URL(link.url).hostname}
-                          </a>
-                          <div className="text-sm text-gray-500 mt-1 flex space-x-2">
-                            <span className="italic">
-                              {link.category || 'Uncategorized'}
-                            </span>
-                            <span>•</span>
-                            <span>{link.source}</span>
+                        {/* dot + link */}
+                        <div className="flex items-center space-x-4 pl-4">
+                          <span className="w-4 h-4 bg-indigo-600 rounded-full flex-shrink-0" />
+                          <div>
+                            <a
+                              href={link.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="font-medium text-indigo-600 hover:underline break-words"
+                            >
+                              {new URL(link.url).hostname}
+                            </a>
+                            <div className="text-sm text-gray-500 mt-1 flex space-x-2">
+                              <span className="italic">
+                                {link.category || 'Uncategorized'}
+                              </span>
+                              <span>•</span>
+                              <span>{link.source}</span>
+                            </div>
                           </div>
                         </div>
                       </div>
-                    ))}
-                  </div>
-                ))}
+                    ))
+                  )}
+                </div>
               </div>
             </div>
           </div>
