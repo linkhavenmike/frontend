@@ -19,9 +19,9 @@ export default function Dashboard() {
   useEffect(() => {
     let filtered = savedLinks;
     if (selectedCategory === 'Uncategorized') {
-      filtered = savedLinks.filter(l => !l.category);
+      filtered = savedLinks.filter((l) => !l.category);
     } else if (selectedCategory !== 'All') {
-      filtered = savedLinks.filter(l => l.category === selectedCategory);
+      filtered = savedLinks.filter((l) => l.category === selectedCategory);
     }
     setLinksByCategory(filtered);
   }, [savedLinks, selectedCategory]);
@@ -43,14 +43,14 @@ export default function Dashboard() {
   };
 
   const uniqueCats = Array.from(
-    new Set(savedLinks.map(l => l.category).filter(Boolean))
+    new Set(savedLinks.map((l) => l.category).filter(Boolean))
   );
   const categories = ['All', ...uniqueCats, 'Uncategorized'];
 
-  const formatDate = iso =>
+  const formatDate = (iso) =>
     new Date(iso).toLocaleDateString('en-US');
 
-  // Group links by display date
+  // Group links by date
   const groupedLinks = linksByCategory.reduce((acc, link) => {
     const d = formatDate(link.createdAt || link.date);
     if (!acc[d]) acc[d] = [];
@@ -62,8 +62,10 @@ export default function Dashboard() {
     <div className="min-h-screen bg-gray-50 px-4 py-10 font-sans">
       <div className="max-w-6xl mx-auto relative">
         {/* Header */}
-        <div className="relative flex items-center justify-center mb-8
-                        w-full md:w-[85%] md:ml-[15%]">
+        <div
+          className="relative flex items-center justify-center mb-8
+                     w-full md:w-[85%] md:ml-[15%]"
+        >
           <button
             className="absolute left-0 md:hidden p-2"
             onClick={() => setMobileMenuOpen(true)}
@@ -110,7 +112,7 @@ export default function Dashboard() {
               </button>
             </div>
             <ul className="space-y-2">
-              {categories.map(cat => (
+              {categories.map((cat) => (
                 <li key={cat}>
                   <button
                     onClick={() => {
@@ -136,7 +138,7 @@ export default function Dashboard() {
             />
           )}
 
-          {/* Content col */}
+          {/* Content column */}
           <div className="md:flex-1 flex flex-col items-center">
             {/* Form */}
             <div className="w-full md:w-2/3">
@@ -152,43 +154,40 @@ export default function Dashboard() {
               </h2>
               <div className="space-y-8">
                 {Object.entries(groupedLinks).map(([date, links]) => (
-                  <div key={date} className="flex items-start">
-                    {/* Date column */}
-                    <div className="w-24 text-sm font-semibold text-gray-600">
-                      {date}
-                    </div>
-                    {/* Links column */}
-                    <div className="relative flex-1">
-                      {/* Vertical line */}
-                      <div className="absolute top-0 left-0 h-full w-px bg-gray-300" />
+                  <div key={date} className="space-y-4">
+                    {links.map((link, idx) => (
+                      <div key={link._id} className="flex items-center">
+                        {/* Date only on first entry */}
+                        <div className="w-24 text-sm font-semibold text-gray-600">
+                          {idx === 0 ? date : ''}
+                        </div>
 
-                      <ul className="space-y-6">
-                        {links.map(link => (
-                          <li key={link._id} className="relative pl-8">
-                            {/* Dot, 25% smaller */}
-                            <span className="absolute left-0 top-1 w-5 h-5 bg-indigo-600 rounded-full" />
+                        {/* Vertical line segment */}
+                        <div className="w-px h-5 bg-gray-300 mx-4" />
 
-                            {/* Display only hostname */}
-                            <a
-                              href={link.url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="ml-2 font-medium text-indigo-600 hover:underline break-words"
-                            >
-                              {new URL(link.url).hostname}
-                            </a>
+                        {/* Dot */}
+                        <div className="w-4 h-4 bg-indigo-600 rounded-full mr-4 flex-shrink-0" />
 
-                            <div className="text-sm text-gray-500 ml-2 mt-1 space-x-2 flex">
-                              <span className="italic">
-                                {link.category || 'Uncategorized'}
-                              </span>
-                              <span>•</span>
-                              <span>{link.source}</span>
-                            </div>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
+                        {/* Link */}
+                        <div className="flex-1">
+                          <a
+                            href={link.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="font-medium text-indigo-600 hover:underline break-words"
+                          >
+                            {new URL(link.url).hostname}
+                          </a>
+                          <div className="text-sm text-gray-500 mt-1 flex space-x-2">
+                            <span className="italic">
+                              {link.category || 'Uncategorized'}
+                            </span>
+                            <span>•</span>
+                            <span>{link.source}</span>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 ))}
               </div>
