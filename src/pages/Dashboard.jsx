@@ -69,17 +69,15 @@ export default function Dashboard() {
           </button>
         </div>
 
-        {/* Sidebar + Content */}
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
-          {/* Categories */}
+        {/* Main layout: sidebar + content */}
+        <div className="flex">
+          {/* Sidebar */}
           <aside
-            className={
-              `fixed inset-y-0 left-0 bg-white w-1/2 max-w-xs p-4 overflow-y-auto z-50 transform transition-transform ` +
-              (mobileMenuOpen ? 'translate-x-0' : '-translate-x-full') +
-              ' md:relative md:translate-x-0 md:col-span-3 md:w-auto md:max-w-none md:bg-transparent md:p-0'
-            }
+            className={`fixed inset-y-0 left-0 w-1/2 max-w-xs p-4 overflow-y-auto bg-white z-50 transform transition-transform ${
+              mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
+            } md:relative md:translate-x-0 md:w-1/5 md:max-w-none md:bg-transparent md:p-0`}
           >
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center justify-between mb-4 md:block">
               <h2 className="text-lg font-semibold text-gray-700">Categories</h2>
               <button className="md:hidden" onClick={() => setMobileMenuOpen(false)}>✕</button>
             </div>
@@ -104,7 +102,7 @@ export default function Dashboard() {
             </ul>
           </aside>
 
-          {/* Mobile overlay */}
+          {/* Mobile backdrop */}
           {mobileMenuOpen && (
             <div
               className="fixed inset-0 bg-black bg-opacity-20 z-40 md:hidden"
@@ -112,17 +110,17 @@ export default function Dashboard() {
             />
           )}
 
-          {/* Main (form + timeline) */}
-          <div className="md:col-span-9">
-            {/* Centered Form (50% width on desktop) */}
-            <div className="flex justify-center mb-8">
-              <div className="bg-white rounded-lg shadow-sm pt-8 pb-4 px-6 w-full md:w-1/2">
+          {/* Content */}
+          <div className="flex-1 md:pl-6">
+            {/* Form (left-aligned, 60% of content width) */}
+            <div className="mb-8">
+              <div className="bg-white rounded-lg shadow-sm pt-8 pb-4 px-6 w-full md:w-3/5">
                 <LinkForm token={token} onLinkSaved={fetchLinks} />
               </div>
             </div>
 
             {/* Timeline */}
-            <div className="mt-6 px-4 md:px-0">
+            <div className="mt-6">
               <h2 className="text-xl font-bold text-gray-800 mb-4">Timeline</h2>
               <div className="relative pl-8">
                 <div className="absolute top-2 left-4 h-full w-px bg-gray-300" />
