@@ -72,14 +72,14 @@ export default function Dashboard() {
           </button>
         </div>
 
-        {/* Categories + Form wrapper */}
-        <div className="relative mb-12">
-          {/* mobile sidebar (50% width, full height) / desktop static */}
+        {/* Sidebar + Form */}
+        <div className="relative mb-12 md:flex md:items-start">
+          {/* Sidebar (mobile fixed 50%, desktop static 15%) */}
           <aside
             className={
               `fixed inset-y-0 left-0 w-1/2 h-full p-4 bg-white overflow-y-auto z-50 transform transition-transform ` +
               (mobileMenuOpen ? 'translate-x-0' : '-translate-x-full') +
-              ` md:relative md:inset-auto md:left-auto md:w-[15%] md:h-auto md:bg-transparent md:overflow-visible md:transform-none`
+              ` md:relative md:translate-x-0 md:inset-auto md:left-auto md:w-[15%] md:h-auto md:bg-transparent md:overflow-visible md:transform-none`
             }
           >
             <div className="flex items-center justify-between mb-4 md:block">
@@ -118,15 +118,15 @@ export default function Dashboard() {
             />
           )}
 
-          {/* Form – always at top, centered under header */}
-          <div className="flex justify-center">
+          {/* Form (mobile full-width, desktop centered in remaining 85%) */}
+          <div className="flex justify-center md:flex-1">
             <div className="bg-white rounded-lg shadow-sm pt-8 pb-4 px-6 w-full md:w-2/3">
               <LinkForm token={token} onLinkSaved={fetchLinks} />
             </div>
           </div>
         </div>
 
-        {/* Timeline – aligned under form */}
+        {/* Timeline – under form, same centering */}
         <div className="w-full md:w-2/3 mx-auto">
           <h2 className="text-xl font-bold text-gray-800 mb-4">Timeline</h2>
           <div className="relative pl-8">
