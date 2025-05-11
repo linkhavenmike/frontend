@@ -126,7 +126,7 @@ export default function Dashboard() {
           {/* Main Content (75% width on desktop) */}
           <main className="col-span-1 md:col-span-9 lg:col-span-9 bg-transparent p-0 md:p-0">
             {/* Input Bubble Wrapper (66% width, below header) */}
-            <div className="bg-white rounded-lg shadow-sm pt-8 pb-4 px-6 w-full md:w-2/3 md:ml-[25%]">
+            <div className="bg-white rounded-lg shadow-sm pt-8 pb-4 px-6 w-full md:w-2/3 md:ml-[33.333%]">
               <LinkForm token={token} onLinkSaved={fetchLinks} />
             </div>
 
