@@ -12,13 +12,17 @@ export default function Dashboard() {
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [linksByCategory, setLinksByCategory] = useState([]);
 
+  // Fetch links on mount
   useEffect(() => {
     fetchLinks();
   }, []);
 
+  // Filter links by category
   useEffect(() => {
     if (selectedCategory === 'All') {
       setLinksByCategory(savedLinks);
+    } else if (selectedCategory === 'Uncategorized') {
+      setLinksByCategory(savedLinks.filter((l) => !l.category));
     } else {
       setLinksByCategory(savedLinks.filter((l) => l.category === selectedCategory));
     }
@@ -41,7 +45,11 @@ export default function Dashboard() {
     navigate('/login');
   };
 
-  const categories = ['All', ...Array.from(new Set(savedLinks.map((l) => l.category)))];
+  // Build category list with 'Uncategorized' at end
+  const uniqueCategories = Array.from(
+    new Set(savedLinks.map((l) => l.category).filter(Boolean))
+  );
+  const categories = ['All', ...uniqueCategories, 'Uncategorized'];
 
   const formatDate = (iso) => {
     const d = new Date(iso);
@@ -50,10 +58,10 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-gray-50 px-4 py-10 font-sans">
-      <div className="max-w-6xl mx-auto grid grid-cols-12 gap-6 relative">
+      <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-6 relative">
 
-        {/* Sidebar (no bubble) */}
-        <aside className="col-span-3 p-4 h-[600px] overflow-y-auto">
+        {/* Sidebar */}
+        <aside className="col-span-12 md:col-span-3 p-4 h-[600px] overflow-y-auto">
           <h2 className="text-lg font-semibold text-gray-700 mb-4">Categories</h2>
           <ul className="space-y-2">
             {categories.map((cat) => (
@@ -73,14 +81,13 @@ export default function Dashboard() {
           </ul>
         </aside>
 
-        {/* Main Content Bubble */}
-        <main className="col-span-9 bg-white rounded-lg shadow-sm p-8">
-          {/* Header inside main */}
-          <div className="relative flex items-center justify-center mb-8">
+        {/* Main Content */}
+        <main className="col-span-12 md:col-span-9 bg-white rounded-lg shadow-sm p-8">
+          <div className="relative flex flex-col items-center md:flex-row md:justify-center mb-8">
             <h1 className="text-4xl font-extrabold text-indigo-600">Link Haven</h1>
             <button
               onClick={handleLogout}
-              className="absolute right-0 text-sm text-gray-500 hover:text-gray-700"
+              className="mt-2 md:mt-0 md:absolute md:right-0 text-sm text-gray-500 hover:text-gray-700"
             >
               Log out
             </button>
