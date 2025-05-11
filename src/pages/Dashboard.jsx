@@ -165,10 +165,10 @@ export default function Dashboard() {
                           {idx === 0 ? date : ''}
                         </div>
 
-                        {/* dot + link */}
-                        <div className="flex items-center space-x-4 pl-4">
-                          <span className="w-4 h-4 bg-indigo-600 rounded-full flex-shrink-0" />
-                          <div>
+                        {/* dot + link on same baseline */}
+                        <div className="pl-4 space-y-1">
+                          <div className="flex items-center space-x-4">
+                            <span className="w-4 h-4 bg-indigo-600 rounded-full flex-shrink-0" />
                             <a
                               href={link.url}
                               target="_blank"
@@ -177,13 +177,13 @@ export default function Dashboard() {
                             >
                               {new URL(link.url).hostname}
                             </a>
-                            <div className="text-sm text-gray-500 mt-1 flex space-x-2">
-                              <span className="italic">
-                                {link.category || 'Uncategorized'}
-                              </span>
-                              <span>•</span>
-                              <span>{link.source}</span>
-                            </div>
+                          </div>
+                          <div className="text-sm text-gray-500 flex space-x-2">
+                            <span className="italic">
+                              {link.category || 'Uncategorized'}
+                            </span>
+                            <span>•</span>
+                            <span>{link.source}</span>
                           </div>
                         </div>
                       </div>
