@@ -14,14 +14,17 @@ export default function Dashboard() {
   const [linksByCategory, setLinksByCategory] = useState([]);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  // Fetch & filter
+  // Fetch links
   useEffect(() => { fetchLinks(); }, []);
+  // Filter links by category
   useEffect(() => {
-    if (selectedCategory === 'All') setLinksByCategory(savedLinks);
-    else if (selectedCategory === 'Uncategorized')
-      setLinksByCategory(savedLinks.filter(l => !l.category));
-    else
-      setLinksByCategory(savedLinks.filter(l => l.category === selectedCategory));
+    if (selectedCategory === 'All') {
+      setLinksByCategory(savedLinks);
+    } else if (selectedCategory === 'Uncategorized') {
+      setLinksByCategory(savedLinks.filter((l) => !l.category));
+    } else {
+      setLinksByCategory(savedLinks.filter((l) => l.category === selectedCategory));
+    }
   }, [savedLinks, selectedCategory]);
 
   const fetchLinks = async () => {
@@ -41,12 +44,19 @@ export default function Dashboard() {
   };
 
   const uniqueCats = Array.from(
-    new Set(savedLinks.map(l => l.category).filter(Boolean))
+    new Set(savedLinks.map((l) => l.category).filter(Boolean))
   );
   const categories = ['All', ...uniqueCats, 'Uncategorized'];
 
-  const formatDate = iso =>
-    new Date(iso).toLocaleDateString('en-US');
+  const formatDate = (iso) => new Date(iso).toLocaleDateString('en-US');
+
+  // Group by formatted date
+  const groupedLinks = linksByCategory.reduce((groups, link) => {
+    const date = formatDate(link.createdAt || link.date);
+    if (!groups[date]) groups[date] = [];
+    groups[date].push(link);
+    return groups;
+  }, {});
 
   return (
     <div className="min-h-screen bg-gray-50 px-4 py-10 font-sans">
@@ -73,7 +83,7 @@ export default function Dashboard() {
           </button>
         </div>
 
-        {/* Main: sidebar + content column */}
+        {/* Main */}
         <div className="relative mb-12 md:flex md:items-start">
           {/* Sidebar */}
           <aside
@@ -95,7 +105,7 @@ export default function Dashboard() {
               </button>
             </div>
             <ul className="space-y-2">
-              {categories.map(cat => (
+              {categories.map((cat) => (
                 <li key={cat}>
                   <button
                     onClick={() => {
@@ -121,7 +131,7 @@ export default function Dashboard() {
             />
           )}
 
-          {/* Content column (form + timeline) */}
+          {/* Content column */}
           <div className="md:flex-1 flex flex-col items-center">
             {/* Form bubble */}
             <div className="w-full md:w-2/3">
@@ -130,41 +140,45 @@ export default function Dashboard() {
               </div>
             </div>
 
-            {/* Timeline – starts under the form, same width */}
+            {/* Timeline */}
             <div className="w-full md:w-2/3 mt-8">
               <h2 className="text-xl font-bold text-gray-800 mb-4">Timeline</h2>
               <div className="relative pl-8">
+                {/* vertical line */}
                 <div className="absolute top-2 left-4 h-full w-px bg-gray-300" />
-                <ul className="space-y-8">
-                  {linksByCategory.map(link => (
-                    <li key={link._id} className="relative">
-                      <span className="absolute -left-[3px] top-1 w-6 h-6
+
+                {/* grouped by date */}
+                {Object.entries(groupedLinks).map(([date, links]) => (
+                  <div key={date} className="mb-8">
+                    <div className="text-xs text-gray-600 mb-2">{date}</div>
+                    <ul className="space-y-6">
+                      {links.map((link) => (
+                        <li key={link._id} className="relative">
+                          <span
+                            className="absolute -left-[3px] top-1 w-6 h-6
                                        bg-indigo-600 rounded-full flex items-center
-                                       justify-center text-white text-sm" />
-                      <div className="pl-8">
-                        <div className="text-xs text-gray-600 mb-1"
-                             style={{ fontSize: '10pt' }}>
-                          {formatDate(link.createdAt || link.date)}
-                        </div>
-                        <a
-                          href={link.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="font-medium text-indigo-600 hover:underline break-words"
-                        >
-                          {link.url}
-                        </a>
-                        <div className="text-sm text-gray-500 mt-1 flex space-x-2">
-                          <span className="italic">
-                            {link.category || 'Uncategorized'}
-                          </span>
-                          <span>•</span>
-                          <span>{link.source}</span>
-                        </div>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
+                                       justify-center text-white text-sm"
+                          />
+                          <div className="pl-8">
+                            <a
+                              href={link.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="font-medium text-indigo-600 hover:underline break-words"
+                            >
+                              {link.url}
+                            </a>
+                            <div className="text-sm text-gray-500 mt-1 flex space-x-2">
+                              <span className="italic">{link.category || 'Uncategorized'}</span>
+                              <span>•</span>
+                              <span>{link.source}</span>
+                            </div>
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
