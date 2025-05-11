@@ -13,13 +13,14 @@ export default function Dashboard() {
   const [linksByCategory, setLinksByCategory] = useState([]);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
+  // Fetch & filter
   useEffect(() => { fetchLinks(); }, []);
   useEffect(() => {
     if (selectedCategory === 'All') setLinksByCategory(savedLinks);
     else if (selectedCategory === 'Uncategorized')
-      setLinksByCategory(savedLinks.filter((l) => !l.category));
+      setLinksByCategory(savedLinks.filter(l => !l.category));
     else
-      setLinksByCategory(savedLinks.filter((l) => l.category === selectedCategory));
+      setLinksByCategory(savedLinks.filter(l => l.category === selectedCategory));
   }, [savedLinks, selectedCategory]);
 
   const fetchLinks = async () => {
@@ -29,27 +30,25 @@ export default function Dashboard() {
       });
       setSavedLinks(await res.json());
     } catch (err) {
-      console.error('Failed to load links:', err);
+      console.error(err);
     }
   };
+  const handleLogout = () => { logout(); navigate('/login'); };
 
-  const handleLogout = () => {
-    logout();
-    navigate('/login');
-  };
-
-  const uniqueCategories = Array.from(
-    new Set(savedLinks.map((l) => l.category).filter(Boolean))
+  // Categories
+  const uniqueCats = Array.from(
+    new Set(savedLinks.map(l => l.category).filter(Boolean))
   );
-  const categories = ['All', ...uniqueCategories, 'Uncategorized'];
+  const categories = ['All', ...uniqueCats, 'Uncategorized'];
 
-  const formatDate = (iso) => new Date(iso).toLocaleDateString('en-US');
+  const formatDate = iso =>
+    new Date(iso).toLocaleDateString('en-US');
 
   return (
     <div className="min-h-screen bg-gray-50 px-4 py-10 font-sans">
       <div className="max-w-6xl mx-auto">
-        {/* Header */}
-        <div className="relative flex items-center justify-center mb-4">
+        {/* — Header — */}
+        <div className="relative flex items-center justify-center mb-8">
           <button
             className="absolute left-0 md:hidden p-2"
             onClick={() => setMobileMenuOpen(true)}
@@ -69,31 +68,27 @@ export default function Dashboard() {
           </button>
         </div>
 
-        {/* —— Centered Form (70% width) —— */}
-        <div className="flex justify-center mb-8">
-          <div className="bg-white rounded-lg shadow-sm pt-8 pb-4 px-6 w-full md:w-[70%]">
-            <LinkForm token={token} onLinkSaved={fetchLinks} />
-          </div>
-        </div>
-
-        {/* —— Sidebar (20%) + Timeline (rest) —— */}
-        <div className="flex">
-          {/* Sidebar */}
+        {/* — Top Row: Sidebar + (absolutely-positioned) Centered Form — */}
+        <div className="flex relative mb-8">
+          {/* Sidebar (slides in on mobile, static on desktop) */}
           <aside
             className={
-              `fixed inset-y-0 left-0 w-1/2 max-w-xs p-4 overflow-y-auto bg-white z-50 transform transition-transform ` +
+              `fixed inset-y-0 left-0 w-1/2 max-w-xs p-4 bg-white overflow-y-auto z-50 transform transition-transform ` +
               (mobileMenuOpen ? 'translate-x-0' : '-translate-x-full') +
-              ' md:relative md:translate-x-0 md:w-[20%] md:max-w-none md:bg-transparent md:p-0'
+              ' md:relative md:translate-x-0 md:w-[20%] md:max-w-none md:bg-transparent md:overflow-visible md:transform-none'
             }
           >
             <div className="flex items-center justify-between mb-4 md:block">
               <h2 className="text-lg font-semibold text-gray-700">Categories</h2>
-              <button className="md:hidden" onClick={() => setMobileMenuOpen(false)}>
+              <button
+                className="md:hidden"
+                onClick={() => setMobileMenuOpen(false)}
+              >
                 ✕
               </button>
             </div>
             <ul className="space-y-2">
-              {categories.map((cat) => (
+              {categories.map(cat => (
                 <li key={cat}>
                   <button
                     onClick={() => {
@@ -114,18 +109,33 @@ export default function Dashboard() {
           </aside>
           {mobileMenuOpen && (
             <div
-              className="fixed inset-0 bg-black bg-opacity-20 z-40 md:hidden"
+              className="fixed inset-0 bg-black bg-opacity-20 z-40"
               onClick={() => setMobileMenuOpen(false)}
             />
           )}
 
-          {/* Timeline */}
-          <div className="flex-1 md:pl-6">
+          {/* Form wrapper is taken out of flow, absolutely centered */}
+          <div className="flex-1 relative">
+            <div className="absolute inset-x-0 top-0 flex justify-center">
+              <div className="bg-white rounded-lg shadow-sm pt-8 pb-4 px-6 w-full md:w-2/3">
+                <LinkForm token={token} onLinkSaved={fetchLinks} />
+              </div>
+            </div>
+            {/* push everything below the form */}
+            <div className="pt-[200px]" />
+          </div>
+        </div>
+
+        {/* — Timeline Row — */}
+        <div className="flex">
+          {/* empty gutter where the sidebar lives */}
+          <div className="hidden md:block w-[20%]" />
+          <main className="flex-1">
             <h2 className="text-xl font-bold text-gray-800 mb-4">Timeline</h2>
             <div className="relative pl-8">
               <div className="absolute top-2 left-4 h-full w-px bg-gray-300" />
               <ul className="space-y-8">
-                {linksByCategory.map((link) => (
+                {linksByCategory.map(link => (
                   <li key={link._id} className="relative">
                     <span className="absolute -left-[3px] top-1 w-6 h-6 bg-indigo-600 rounded-full flex items-center justify-center text-white text-sm" />
                     <div className="pl-8">
@@ -150,7 +160,7 @@ export default function Dashboard() {
                 ))}
               </ul>
             </div>
-          </div>
+          </main>
         </div>
       </div>
     </div>
