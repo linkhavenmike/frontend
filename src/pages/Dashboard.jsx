@@ -69,17 +69,28 @@ export default function Dashboard() {
           </button>
         </div>
 
-        {/* Main layout: sidebar + content */}
+        {/* —— Centered Form (70% width) —— */}
+        <div className="flex justify-center mb-8">
+          <div className="bg-white rounded-lg shadow-sm pt-8 pb-4 px-6 w-full md:w-[70%]">
+            <LinkForm token={token} onLinkSaved={fetchLinks} />
+          </div>
+        </div>
+
+        {/* —— Sidebar (20%) + Timeline (rest) —— */}
         <div className="flex">
           {/* Sidebar */}
           <aside
-            className={`fixed inset-y-0 left-0 w-1/2 max-w-xs p-4 overflow-y-auto bg-white z-50 transform transition-transform ${
-              mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
-            } md:relative md:translate-x-0 md:w-1/5 md:max-w-none md:bg-transparent md:p-0`}
+            className={
+              `fixed inset-y-0 left-0 w-1/2 max-w-xs p-4 overflow-y-auto bg-white z-50 transform transition-transform ` +
+              (mobileMenuOpen ? 'translate-x-0' : '-translate-x-full') +
+              ' md:relative md:translate-x-0 md:w-[20%] md:max-w-none md:bg-transparent md:p-0'
+            }
           >
             <div className="flex items-center justify-between mb-4 md:block">
               <h2 className="text-lg font-semibold text-gray-700">Categories</h2>
-              <button className="md:hidden" onClick={() => setMobileMenuOpen(false)}>✕</button>
+              <button className="md:hidden" onClick={() => setMobileMenuOpen(false)}>
+                ✕
+              </button>
             </div>
             <ul className="space-y-2">
               {categories.map((cat) => (
@@ -101,8 +112,6 @@ export default function Dashboard() {
               ))}
             </ul>
           </aside>
-
-          {/* Mobile backdrop */}
           {mobileMenuOpen && (
             <div
               className="fixed inset-0 bg-black bg-opacity-20 z-40 md:hidden"
@@ -110,46 +119,36 @@ export default function Dashboard() {
             />
           )}
 
-          {/* Content */}
+          {/* Timeline */}
           <div className="flex-1 md:pl-6">
-            {/* Form (left-aligned, 60% of content width) */}
-            <div className="mb-8">
-              <div className="bg-white rounded-lg shadow-sm pt-8 pb-4 px-6 w-full md:w-3/5">
-                <LinkForm token={token} onLinkSaved={fetchLinks} />
-              </div>
-            </div>
-
-            {/* Timeline */}
-            <div className="mt-6">
-              <h2 className="text-xl font-bold text-gray-800 mb-4">Timeline</h2>
-              <div className="relative pl-8">
-                <div className="absolute top-2 left-4 h-full w-px bg-gray-300" />
-                <ul className="space-y-8">
-                  {linksByCategory.map((link) => (
-                    <li key={link._id} className="relative">
-                      <span className="absolute -left-[3px] top-1 w-6 h-6 bg-indigo-600 rounded-full flex items-center justify-center text-white text-sm" />
-                      <div className="pl-8">
-                        <div className="text-xs text-gray-600 mb-1" style={{ fontSize: '10pt' }}>
-                          {formatDate(link.createdAt || link.date)}
-                        </div>
-                        <a
-                          href={link.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="font-medium text-indigo-600 hover:underline break-words"
-                        >
-                          {link.url}
-                        </a>
-                        <div className="text-sm text-gray-500 mt-1 flex space-x-2">
-                          <span className="italic">{link.category || 'Uncategorized'}</span>
-                          <span>•</span>
-                          <span>{link.source}</span>
-                        </div>
+            <h2 className="text-xl font-bold text-gray-800 mb-4">Timeline</h2>
+            <div className="relative pl-8">
+              <div className="absolute top-2 left-4 h-full w-px bg-gray-300" />
+              <ul className="space-y-8">
+                {linksByCategory.map((link) => (
+                  <li key={link._id} className="relative">
+                    <span className="absolute -left-[3px] top-1 w-6 h-6 bg-indigo-600 rounded-full flex items-center justify-center text-white text-sm" />
+                    <div className="pl-8">
+                      <div className="text-xs text-gray-600 mb-1" style={{ fontSize: '10pt' }}>
+                        {formatDate(link.createdAt || link.date)}
                       </div>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+                      <a
+                        href={link.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="font-medium text-indigo-600 hover:underline break-words"
+                      >
+                        {link.url}
+                      </a>
+                      <div className="text-sm text-gray-500 mt-1 flex space-x-2">
+                        <span className="italic">{link.category || 'Uncategorized'}</span>
+                        <span>•</span>
+                        <span>{link.source}</span>
+                      </div>
+                    </div>
+                  </li>
+                ))}
+              </ul>
             </div>
           </div>
         </div>
